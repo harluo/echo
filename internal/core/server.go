@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/harluo/echo/internal/config"
+	"github.com/harluo/echo/internal/kernel"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,6 +12,8 @@ type Server struct {
 
 func newServer(config *config.Server) (server *Server, err error) {
 	e := echo.New()
+
+	// 自定义配置
 	if nil != config.Timeout && 0 != config.Timeout.Read {
 		e.Server.WriteTimeout = config.Timeout.Read
 	}
@@ -29,18 +32,32 @@ func (server *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *echo
 	return server.echo.Group(prefix, middles...)
 }
 
-func (server *Server) Get(path string, handler echo.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return server.echo.GET(path, handler, middles...)
+func (server *Server) Get(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
+	return server.echo.GET(path, func(ctx echo.Context) error {
+		return handler(kernel.NewContext(ctx))
+	}, middles...)
 }
 
-func (server *Server) Put(path string, handler echo.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return server.echo.PUT(path, handler, middles...)
+func (server *Server) Put(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
+	return server.echo.PUT(path, func(ctx echo.Context) error {
+		return handler(kernel.NewContext(ctx))
+	}, middles...)
 }
 
-func (server *Server) Post(path string, handler echo.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return server.echo.POST(path, handler, middles...)
+func (server *Server) Post(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
+	return server.echo.POST(path, func(ctx echo.Context) error {
+		return handler(kernel.NewContext(ctx))
+	}, middles...)
 }
 
-func (server *Server) Delete(path string, handler echo.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return server.echo.DELETE(path, handler, middles...)
+func (server *Server) Delete(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
+	return server.echo.DELETE(path, func(ctx echo.Context) error {
+		return handler(kernel.NewContext(ctx))
+	}, middles...)
+}
+
+func (server *Server) Options(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
+	return server.echo.OPTIONS(path, func(ctx echo.Context) error {
+		return handler(kernel.NewContext(ctx))
+	}, middles...)
 }
