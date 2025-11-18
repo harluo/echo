@@ -6,6 +6,7 @@ import (
 
 func init() {
 	di.New().Instance().Put(
+		newHttpServer,
 		newServer,
 	).Build().Apply()
 }

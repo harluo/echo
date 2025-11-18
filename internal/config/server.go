@@ -6,7 +6,7 @@ import (
 
 type Server struct {
 	// 接口
-	Interface string `json:"interface,omitempty" validate:"interface"`
+	Interface string `json:"interface,omitempty"`
 	// 端口
 	Port uint16 `default:"9090" json:"port,omitempty" validate:"min=1000,max=65535"`
 	// 超时
