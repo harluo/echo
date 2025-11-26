@@ -2,18 +2,18 @@ package core
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/harluo/echo/internal/kernel"
+	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
 )
 
 type Server struct {
 	echo   *echo.Echo
-	server *http.Server
+	server *httpd.Server
 }
 
-func newServer(server *http.Server) *Server {
+func newServer(server *httpd.Server) *Server {
 	e := echo.New()
 	e.HideBanner = true // 禁用标志输出
 
