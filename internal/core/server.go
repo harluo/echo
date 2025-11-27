@@ -15,9 +15,14 @@ type Server struct {
 	handler *core.Handler
 }
 
-func newServer(server *httpd.Server, handler *core.Handler) *Server {
+func newServer(
+	server *httpd.Server,
+	handler *core.Handler,
+	validator *core.Validator,
+) *Server {
 	e := echo.New()
-	e.HideBanner = true // 禁用标志输出
+	e.HideBanner = true     // 禁用标志输出
+	e.Validator = validator // 校验器
 
 	return &Server{
 		echo:    e,
