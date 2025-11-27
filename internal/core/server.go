@@ -32,7 +32,7 @@ func (s *Server) Start(_ context.Context, router Router, routers ...Router) erro
 		optional.Route(s)
 	}
 
-	return s.echo.StartServer(s.server.Server)
+	return s.echo.StartServer(s.server.Http())
 }
 
 func (s *Server) Stop(ctx context.Context) error {
