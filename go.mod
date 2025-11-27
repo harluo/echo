@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	github.com/harluo/di v0.0.5
-	github.com/harluo/httpd v0.0.2
+	github.com/harluo/httpd v0.0.3
 	github.com/labstack/echo/v4 v4.13.4
 )
 
