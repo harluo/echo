@@ -34,6 +34,10 @@ func (c *Context) Fill(req any, purpose string) (err error) {
 		err = be
 		errors := fields.Add(field.Error(be))
 		c.logger.Warn("绑定值出错", errors[0], errors[1:]...)
+	} else if bhe := (&echo.DefaultBinder{}).BindHeaders(c.context, req); nil != bhe {
+		err = bhe
+		errors := fields.Add(field.Error(err))
+		c.logger.Warn("绑定值出错", errors[0], errors[1:]...)
 	} else if me := mengpo.New().Build().Set(req); nil != me {
 		err = me
 		errors := fields.Add(field.Error(me))
