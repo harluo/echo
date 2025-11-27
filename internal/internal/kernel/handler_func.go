@@ -1,3 +1,3 @@
 package kernel
 
-type HandlerFunc func(*Context) (any, error)
+type HandlerFunc func(*Context, any) (any, error)

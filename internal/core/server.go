@@ -48,22 +48,42 @@ func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	return NewGroup(s.echo.Group(prefix, middles...), s.handler)
 }
 
-func (s *Server) Get(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return s.echo.GET(path, s.handler.Handle(handler), middles...)
+func (s *Server) Get(
+	path string,
+	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
+	middles ...echo.MiddlewareFunc,
+) *echo.Route {
+	return s.echo.GET(path, s.handler.Handle(creator, handler), middles...)
 }
 
-func (s *Server) Put(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return s.echo.PUT(path, s.handler.Handle(handler), middles...)
+func (s *Server) Put(
+	path string,
+	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
+	middles ...echo.MiddlewareFunc,
+) *echo.Route {
+	return s.echo.PUT(path, s.handler.Handle(creator, handler), middles...)
 }
 
-func (s *Server) Post(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return s.echo.POST(path, s.handler.Handle(handler), middles...)
+func (s *Server) Post(
+	path string,
+	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
+	middles ...echo.MiddlewareFunc,
+) *echo.Route {
+	return s.echo.POST(path, s.handler.Handle(creator, handler), middles...)
 }
 
-func (s *Server) Delete(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return s.echo.DELETE(path, s.handler.Handle(handler), middles...)
+func (s *Server) Delete(
+	path string,
+	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
+	middles ...echo.MiddlewareFunc,
+) *echo.Route {
+	return s.echo.DELETE(path, s.handler.Handle(creator, handler), middles...)
 }
 
-func (s *Server) Options(path string, handler kernel.HandlerFunc, middles ...echo.MiddlewareFunc) *echo.Route {
-	return s.echo.OPTIONS(path, s.handler.Handle(handler), middles...)
+func (s *Server) Options(
+	path string,
+	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
+	middles ...echo.MiddlewareFunc,
+) *echo.Route {
+	return s.echo.OPTIONS(path, s.handler.Handle(creator, handler), middles...)
 }
