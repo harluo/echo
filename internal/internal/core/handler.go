@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/goexl/gox"
@@ -21,7 +22,7 @@ func newHandler(logger log.Logger) *Handler {
 	}
 }
 
-func (h Handler) Handle(creator kernel.CreatorFunc, handler kernel.HandlerFunc) echo.HandlerFunc {
+func (h *Handler) Handle(creator kernel.CreatorFunc, handler kernel.HandlerFunc) echo.HandlerFunc {
 	return func(ctx echo.Context) (err error) {
 		request := creator() // 每次创建请求
 		fields := gox.Fields[any]{
@@ -46,11 +47,26 @@ func (h Handler) Handle(creator kernel.CreatorFunc, handler kernel.HandlerFunc) 
 			errors := fields.Add(field.Error(ve))
 			h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := handler(kernel.NewContext(ctx, h.logger), request); nil != he {
-			err = he
+			err = h.handleException(ctx, he)
 		} else {
 			err = ctx.JSON(http.StatusOK, rsp)
 		}
 
 		return
 	}
+}
+
+func (h *Handler) handleException(ctx echo.Context, exception error) (err error) {
+	switch converted := exception.(type) {
+	case json.Marshaler:
+		if bytes, mje := converted.MarshalJSON(); nil == mje {
+			err = ctx.JSONBlob(http.StatusBadGateway, bytes)
+		} else {
+			err = exception
+		}
+	default:
+		err = exception
+	}
+
+	return
 }
