@@ -71,7 +71,11 @@ func (l *Logger) SetLevel(lvl labstack.Lvl) {
 	}
 }
 
-func (l *Logger) SetHeader(_ string) {}
+func (l *Logger) SetHeader(header string) {
+	headerField := field.New("header", header)
+	l.logger.Info("设置标题头", headerField)
+	l.logger.Warn("标题头设置无效", headerField)
+}
 
 func (l *Logger) Print(fields ...any) {
 	l.logger.Info(l.getMessage(), field.New("fields", fields))
