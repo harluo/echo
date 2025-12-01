@@ -18,6 +18,13 @@ func NewGroup(group *echo.Group, handler *core.Handler) *Group {
 	}
 }
 
+func (g *Group) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
+	return &Group{
+		group:   g.group.Group(prefix, middles...),
+		handler: g.handler,
+	}
+}
+
 func (g *Group) Get(
 	path string,
 	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
