@@ -75,94 +75,98 @@ func (l *Logger) SetLevel(lvl labstack.Lvl) {
 func (l *Logger) SetHeader(_ string) {}
 
 func (l *Logger) Print(fields ...any) {
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Info(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Printf(format string, args ...any) {
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Info(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Printj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Info(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Debug(fields ...any) {
-	l.logger.Debug(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Debug(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.logger.Debug(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Debug(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Debugj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Debug(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Debug(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Info(fields ...any) {
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Info(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Infof(format string, args ...any) {
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Info(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Infoj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Info(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Info(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Warn(fields ...any) {
-	l.logger.Warn(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Warn(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Warnf(format string, args ...any) {
-	l.logger.Warn(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Warn(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Warnj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Warn(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Warn(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Error(fields ...any) {
-	l.logger.Error(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Error(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Errorf(format string, args ...any) {
-	l.logger.Error(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Error(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Errorj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Error(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Error(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Fatal(fields ...any) {
-	l.logger.Fatal(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Fatal(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Fatalj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Fatal(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Fatal(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Fatalf(format string, args ...any) {
-	l.logger.Fatal(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Fatal(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
 }
 
 func (l *Logger) Panic(fields ...any) {
-	l.logger.Panic(fmt.Sprintf("%sEcho输出", l.prefix), field.New("fields", fields))
+	l.logger.Panic(l.getMessage(), field.New("fields", fields))
 }
 
 func (l *Logger) Panicj(json labstack.JSON) {
 	fields := l.parseJson(json)
-	l.logger.Panic(fmt.Sprintf("%sEcho输出", l.prefix), fields[0], fields[1:]...)
+	l.logger.Panic(l.getMessage(), fields[0], fields[1:]...)
 }
 
 func (l *Logger) Panicf(format string, args ...any) {
-	l.logger.Panic(fmt.Sprintf("%sEcho输出", l.prefix), field.New("output", fmt.Sprintf(format, args...)))
+	l.logger.Panic(l.getMessage(), field.New("output", fmt.Sprintf(format, args...)))
+}
+
+func (l *Logger) getMessage() string {
+	return fmt.Sprintf("%sEcho日志", l.prefix)
 }
 
 func (l *Logger) parseJson(json labstack.JSON) (fields gox.Fields[any]) {
