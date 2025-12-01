@@ -11,7 +11,7 @@ import (
 var _ context.Context = (*Context)(nil)
 
 type Context struct {
-	ec     echo.Context
+	echo   echo.Context
 	ctx    context.Context
 	logger log.Logger
 }
@@ -21,7 +21,7 @@ func NewContext(
 	logger log.Logger,
 ) *Context {
 	return &Context{
-		ec:     ec,
+		echo:   ec,
 		ctx:    context.Background(),
 		logger: logger,
 	}
