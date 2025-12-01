@@ -17,7 +17,6 @@ var _ echo.Logger = (*Logger)(nil)
 type Logger struct {
 	logger log.Logger
 	prefix string
-	level  labstack.Lvl
 }
 
 func newLogger(logger log.Logger) *Logger {
