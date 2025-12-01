@@ -19,10 +19,12 @@ func newServer(
 	server *httpd.Server,
 	handler *core.Handler,
 	validator *core.Validator,
+	logger *core.Logger,
 ) *Server {
 	e := echo.New()
 	e.HideBanner = true     // 禁用标志输出
 	e.Validator = validator // 校验器
+	e.Logger = logger       // 日志
 
 	return &Server{
 		echo:    e,

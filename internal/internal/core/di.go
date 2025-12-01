@@ -8,5 +8,6 @@ func init() {
 	di.New().Instance().Put(
 		newHandler,
 		newValidator,
+		newLogger,
 	).Build().Apply()
 }
