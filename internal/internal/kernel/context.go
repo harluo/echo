@@ -27,18 +27,26 @@ func NewContext(
 	}
 }
 
-func (c Context) Deadline() (time.Time, bool) {
+func (c *Context) Deadline() (time.Time, bool) {
 	return c.ctx.Deadline()
 }
 
-func (c Context) Done() <-chan struct{} {
+func (c *Context) Done() <-chan struct{} {
 	return c.ctx.Done()
 }
 
-func (c Context) Err() error {
+func (c *Context) Err() error {
 	return c.ctx.Err()
 }
 
-func (c Context) Value(key any) any {
+func (c *Context) Value(key any) any {
 	return c.ctx.Value(key)
+}
+
+func (c *Context) Header(key string) string {
+	return c.ec.Request().Header.Get(key)
+}
+
+func (c *Context) Method() string {
+	return c.ec.Request().Method
 }

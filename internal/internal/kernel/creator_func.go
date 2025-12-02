@@ -1,3 +1,3 @@
 package kernel
 
-type CreatorFunc func() any
+type CreatorFunc func(ctx *Context) any
