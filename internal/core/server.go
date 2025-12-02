@@ -43,8 +43,14 @@ func (s *Server) Start(_ context.Context, router Router, routers ...Router) erro
 	return s.echo.StartServer(s.server.Http())
 }
 
-func (s *Server) Stop(ctx context.Context) error {
-	return s.echo.Shutdown(ctx)
+func (s *Server) Stop(ctx context.Context) (err error) {
+	if see := s.echo.Shutdown(ctx); nil != see {
+		err = see
+	} else if she := s.server.Http().Shutdown(ctx); nil != she {
+		err = she
+	}
+
+	return
 }
 
 func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
