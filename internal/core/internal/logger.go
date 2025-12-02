@@ -1,4 +1,4 @@
-package core
+package internal
 
 import (
 	"fmt"
@@ -23,6 +23,10 @@ func newLogger(logger log.Logger) *Logger {
 	return &Logger{
 		logger: logger,
 	}
+}
+
+func (l *Logger) Logger() log.Logger {
+	return l.logger
 }
 
 func (l *Logger) Output() io.Writer {

@@ -1,4 +1,4 @@
-package core
+package internal
 
 import (
 	"encoding/json"
@@ -7,44 +7,42 @@ import (
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
-	"github.com/goexl/mengpo"
 	"github.com/harluo/echo/internal/internal/kernel"
+	"github.com/harluo/echo/internal/internal/param"
 	"github.com/labstack/echo/v4"
 )
 
-type Handler struct {
+type Handler[T any] struct {
+	params *param.Route[T]
 	logger log.Logger
 }
 
-func newHandler(logger log.Logger) *Handler {
-	return &Handler{
+func NewHandler[T any](params *param.Route[T], logger log.Logger) *Handler[T] {
+	return &Handler[T]{
+		params: params,
 		logger: logger,
 	}
 }
 
-func (h *Handler) Handle(creator kernel.CreatorFunc, handler kernel.HandlerFunc) echo.HandlerFunc {
+func (h *Handler[T]) Handle(handler kernel.Handler[T, any]) echo.HandlerFunc {
 	return func(ctx echo.Context) (err error) {
 		context := kernel.NewContext(ctx, h.logger)
 
-		request := creator(context) // 每次创建请求
+		request := h.params.Picker(context) // 每次创建请求
 		fields := gox.Fields[any]{
 			field.New("request", request),
 		}
 		h.logger.Debug("收到请求", fields[0], fields[1:]...)
 
-		if be := ctx.Bind(request); nil != be {
+		if be := h.params.Binder(context, request); nil != be {
 			err = be
 			errors := fields.Add(field.Error(be))
 			h.logger.Warn("绑定值出错", errors[0], errors[1:]...)
-		} else if bhe := (&echo.DefaultBinder{}).BindHeaders(ctx, request); nil != bhe {
-			err = bhe
-			errors := fields.Add(field.Error(err))
-			h.logger.Warn("绑定值出错", errors[0], errors[1:]...)
-		} else if me := mengpo.New().Build().Set(request); nil != me {
+		} else if me := h.params.Defaulter(context, request); nil != me {
 			err = me
 			errors := fields.Add(field.Error(me))
 			h.logger.Warn("设置默认值出错", errors[0], errors[1:]...)
-		} else if ve := ctx.Validate(request); nil != ve {
+		} else if ve := h.params.Validator(context, request); nil != ve {
 			err = ve
 			errors := fields.Add(field.Error(ve))
 			h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
@@ -58,7 +56,7 @@ func (h *Handler) Handle(creator kernel.CreatorFunc, handler kernel.HandlerFunc)
 	}
 }
 
-func (h *Handler) handleException(ctx echo.Context, exception error) (err error) {
+func (h *Handler[T]) handleException(ctx echo.Context, exception error) (err error) {
 	switch converted := exception.(type) {
 	case json.Marshaler:
 		if bytes, mje := converted.MarshalJSON(); nil == mje {

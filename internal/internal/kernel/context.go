@@ -17,14 +17,18 @@ type Context struct {
 }
 
 func NewContext(
-	ec echo.Context,
+	echo echo.Context,
 	logger log.Logger,
 ) *Context {
 	return &Context{
-		echo:   ec,
+		echo:   echo,
 		ctx:    context.Background(),
 		logger: logger,
 	}
+}
+
+func (c *Context) Echo() echo.Context {
+	return c.echo
 }
 
 func (c *Context) Deadline() (time.Time, bool) {
@@ -44,9 +48,13 @@ func (c *Context) Value(key any) any {
 }
 
 func (c *Context) Header(key string) string {
-	return c.ec.Request().Header.Get(key)
+	return c.echo.Request().Header.Get(key)
 }
 
 func (c *Context) Method() string {
-	return c.ec.Request().Method
+	return c.echo.Request().Method
+}
+
+func (c *Context) Bind(target any) error {
+	return c.echo.Bind(target)
 }

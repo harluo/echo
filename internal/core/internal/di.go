@@ -1,4 +1,4 @@
-package core
+package internal
 
 import (
 	"github.com/harluo/di"
@@ -6,7 +6,6 @@ import (
 
 func init() {
 	di.New().Instance().Put(
-		newHandler,
 		newValidator,
 		newLogger,
 	).Build().Apply()

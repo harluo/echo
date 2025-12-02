@@ -3,23 +3,24 @@ package core
 import (
 	"context"
 
-	"github.com/harluo/echo/internal/internal/core"
+	"github.com/goexl/log"
+	"github.com/harluo/echo/internal/core/internal"
+	"github.com/harluo/echo/internal/internal/builder"
 	"github.com/harluo/echo/internal/internal/kernel"
 	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
 )
 
 type Server struct {
-	echo    *echo.Echo
-	server  *httpd.Server
-	handler *core.Handler
+	echo   *echo.Echo
+	server *httpd.Server
+	logger log.Logger
 }
 
 func newServer(
 	server *httpd.Server,
-	handler *core.Handler,
-	validator *core.Validator,
-	logger *core.Logger,
+	validator *internal.Validator,
+	logger *internal.Logger,
 ) *Server {
 	e := echo.New()
 	e.HideBanner = true     // 禁用标志输出
@@ -27,9 +28,9 @@ func newServer(
 	e.Logger = logger       // 日志
 
 	return &Server{
-		echo:    e,
-		server:  server,
-		handler: handler,
+		echo:   e,
+		server: server,
+		logger: logger.Logger(),
 	}
 }
 
@@ -47,45 +48,9 @@ func (s *Server) Stop(ctx context.Context) error {
 }
 
 func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
-	return NewGroup(s.echo.Group(prefix, middles...), s.handler)
+	return NewGroup(s.echo.Group(prefix, middles...), s.logger)
 }
 
-func (s *Server) Get(
-	path string,
-	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
-	middles ...echo.MiddlewareFunc,
-) *echo.Route {
-	return s.echo.GET(path, s.handler.Handle(creator, handler), middles...)
-}
-
-func (s *Server) Put(
-	path string,
-	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
-	middles ...echo.MiddlewareFunc,
-) *echo.Route {
-	return s.echo.PUT(path, s.handler.Handle(creator, handler), middles...)
-}
-
-func (s *Server) Post(
-	path string,
-	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
-	middles ...echo.MiddlewareFunc,
-) *echo.Route {
-	return s.echo.POST(path, s.handler.Handle(creator, handler), middles...)
-}
-
-func (s *Server) Delete(
-	path string,
-	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
-	middles ...echo.MiddlewareFunc,
-) *echo.Route {
-	return s.echo.DELETE(path, s.handler.Handle(creator, handler), middles...)
-}
-
-func (s *Server) Options(
-	path string,
-	creator kernel.CreatorFunc, handler kernel.HandlerFunc,
-	middles ...echo.MiddlewareFunc,
-) *echo.Route {
-	return s.echo.OPTIONS(path, s.handler.Handle(creator, handler), middles...)
+func (s *Server) Route(picker kernel.Picker[any]) *builder.Route[any] {
+	return builder.NewRoute(picker, s.echo, s.logger)
 }
