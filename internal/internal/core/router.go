@@ -25,22 +25,37 @@ func NewRouter[T any](
 	}
 }
 
-func (r *Router[T]) Get() *echo.Route {
-	return r.setter.GET(r.params.Path, r.handler.Handle(), r.params.Middles...)
+func (r *Router[T]) Get() (route *echo.Route) {
+	route = r.setter.GET(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route.Name = r.params.Name
+
+	return
 }
 
-func (r *Router[T]) Put() *echo.Route {
-	return r.setter.PUT(r.params.Path, r.handler.Handle(), r.params.Middles...)
+func (r *Router[T]) Put() (route *echo.Route) {
+	route = r.setter.GET(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route.Name = r.params.Name
+
+	return
 }
 
-func (r *Router[T]) Post() *echo.Route {
-	return r.setter.POST(r.params.Path, r.handler.Handle(), r.params.Middles...)
+func (r *Router[T]) Post() (route *echo.Route) {
+	route = r.setter.POST(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route.Name = r.params.Name
+
+	return
 }
 
-func (r *Router[T]) Delete() *echo.Route {
-	return r.setter.DELETE(r.params.Path, r.handler.Handle(), r.params.Middles...)
+func (r *Router[T]) Delete() (route *echo.Route) {
+	route = r.setter.DELETE(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route.Name = r.params.Name
+
+	return
 }
 
-func (r *Router[T]) Options() *echo.Route {
-	return r.setter.OPTIONS(r.params.Path, r.handler.Handle(), r.params.Middles...)
+func (r *Router[T]) Options() (route *echo.Route) {
+	route = r.setter.OPTIONS(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route.Name = r.params.Name
+
+	return
 }

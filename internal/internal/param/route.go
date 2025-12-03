@@ -13,6 +13,7 @@ type Route[T any] struct {
 	Binder    kernel.Binder[T]
 	Defaulter kernel.Defaulter[T]
 
+	Name    string
 	Path    string
 	Middles []echo.MiddlewareFunc
 }
@@ -35,6 +36,7 @@ func NewRoute[T any](picker kernel.Picker[T]) *Route[T] {
 		Defaulter: func(ctx *kernel.Context, t T) error {
 			return mengpo.New().Build().Set(t)
 		},
+		Name:    "",
 		Path:    "",
 		Middles: make([]echo.MiddlewareFunc, 0),
 	}

@@ -57,6 +57,13 @@ func (r *Route[T]) Path(path string) (route *Route[T]) {
 	return
 }
 
+func (r *Route[T]) Name(name string) (route *Route[T]) {
+	r.params.Name = name
+	route = r
+
+	return
+}
+
 func (r *Route[T]) Middleware(middleware echo.MiddlewareFunc, optionals ...echo.MiddlewareFunc) (route *Route[T]) {
 	r.params.Middles = append(r.params.Middles, middleware)
 	r.params.Middles = append(r.params.Middles, optionals...)
