@@ -13,18 +13,20 @@ import (
 )
 
 type Handler[T any] struct {
-	params *param.Route[T]
-	logger log.Logger
+	handler kernel.Handler[T, any]
+	params  *param.Route[T]
+	logger  log.Logger
 }
 
-func NewHandler[T any](params *param.Route[T], logger log.Logger) *Handler[T] {
+func NewHandler[T any](handler kernel.Handler[T, any], params *param.Route[T], logger log.Logger) *Handler[T] {
 	return &Handler[T]{
-		params: params,
-		logger: logger,
+		handler: handler,
+		params:  params,
+		logger:  logger,
 	}
 }
 
-func (h *Handler[T]) Handle(handler kernel.Handler[T, any]) echo.HandlerFunc {
+func (h *Handler[T]) Handle() echo.HandlerFunc {
 	return func(ctx echo.Context) (err error) {
 		context := kernel.NewContext(ctx, h.logger)
 
@@ -46,7 +48,7 @@ func (h *Handler[T]) Handle(handler kernel.Handler[T, any]) echo.HandlerFunc {
 			err = ve
 			errors := fields.Add(field.Error(ve))
 			h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
-		} else if rsp, he := handler(context, request); nil != he {
+		} else if rsp, he := h.handler(context, request); nil != he {
 			err = h.handleException(ctx, he)
 		} else {
 			err = ctx.JSON(http.StatusOK, rsp)

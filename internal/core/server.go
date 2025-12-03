@@ -57,6 +57,6 @@ func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	return NewGroup(s.echo.Group(prefix, middles...), s.logger)
 }
 
-func (s *Server) Route(picker kernel.Picker[any]) *builder.Route[any] {
-	return builder.NewRoute(picker, s.echo, s.logger)
+func (s *Server) Route(picker kernel.Picker[any], handler kernel.Handler[any, any]) *builder.Route[any] {
+	return builder.NewRoute(picker, handler, s.echo, s.logger)
 }

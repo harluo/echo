@@ -5,17 +5,25 @@ import (
 	"github.com/harluo/echo/internal/internal/core"
 	"github.com/harluo/echo/internal/internal/kernel"
 	"github.com/harluo/echo/internal/internal/param"
+	"github.com/labstack/echo/v4"
 )
 
 type Route[T any] struct {
-	params *param.Route[T]
+	params  *param.Route[T]
+	handler kernel.Handler[T, any]
+
 	logger log.Logger
 	setter kernel.Setter
 }
 
-func NewRoute[T any](picker kernel.Picker[T], setter kernel.Setter, logger log.Logger) *Route[T] {
+func NewRoute[T any](
+	picker kernel.Picker[T], handler kernel.Handler[T, any],
+	setter kernel.Setter, logger log.Logger,
+) *Route[T] {
 	return &Route[T]{
-		params: param.NewRoute(picker),
+		params:  param.NewRoute(picker),
+		handler: handler,
+
 		logger: logger,
 		setter: setter,
 	}
@@ -42,6 +50,21 @@ func (r *Route[T]) Defaulter(defaulter kernel.Defaulter[T]) (route *Route[T]) {
 	return
 }
 
+func (r *Route[T]) Path(path string) (route *Route[T]) {
+	r.params.Path = path
+	route = r
+
+	return
+}
+
+func (r *Route[T]) Middleware(middleware echo.MiddlewareFunc, optionals ...echo.MiddlewareFunc) (route *Route[T]) {
+	r.params.Middles = append(r.params.Middles, middleware)
+	r.params.Middles = append(r.params.Middles, optionals...)
+	route = r
+
+	return
+}
+
 func (r *Route[T]) Build() *core.Router[T] {
-	return core.NewRouter(r.params, r.setter, r.logger)
+	return core.NewRouter(r.handler, r.params, r.setter, r.logger)
 }

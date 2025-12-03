@@ -25,6 +25,6 @@ func (g *Group) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	}
 }
 
-func (g *Group) Route(picker kernel.Picker[any]) *builder.Route[any] {
-	return builder.NewRoute(picker, g.group, g.logger)
+func (g *Group) Route(picker kernel.Picker[any], handler kernel.Handler[any, any]) *builder.Route[any] {
+	return builder.NewRoute(picker, handler, g.group, g.logger)
 }
