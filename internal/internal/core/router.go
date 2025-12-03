@@ -33,7 +33,7 @@ func (r *Router[T]) Get() (route *echo.Route) {
 }
 
 func (r *Router[T]) Put() (route *echo.Route) {
-	route = r.setter.GET(r.params.Path, r.handler.Handle(), r.params.Middles...)
+	route = r.setter.PUT(r.params.Path, r.handler.Handle(), r.params.Middles...)
 	route.Name = r.params.Name
 
 	return
