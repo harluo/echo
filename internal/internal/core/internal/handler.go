@@ -37,16 +37,25 @@ func (h *Handler[T]) Handle() echo.HandlerFunc {
 		h.logger.Debug("收到请求", fields[0], fields[1:]...)
 
 		if be := h.params.Binder(context, request); nil != be {
-			err = be
 			errors := fields.Add(field.Error(be))
+			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
+				"code":    1,
+				"message": "数据格式有错误",
+			})
 			h.logger.Warn("绑定值出错", errors[0], errors[1:]...)
 		} else if me := h.params.Defaulter(context, request); nil != me {
-			err = me
 			errors := fields.Add(field.Error(me))
+			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
+				"code":    2,
+				"message": "数据不匹配",
+			})
 			h.logger.Warn("设置默认值出错", errors[0], errors[1:]...)
 		} else if ve := h.params.Validator(context, request); nil != ve {
-			err = ve
 			errors := fields.Add(field.Error(ve))
+			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
+				"code":    3,
+				"message": "数据无效",
+			})
 			h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := h.handler(context, request); nil != he {
 			err = h.handleException(ctx, he)
