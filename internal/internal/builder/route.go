@@ -13,12 +13,12 @@ type Route[T any] struct {
 	handler kernel.Handler[T, any]
 
 	logger log.Logger
-	setter kernel.Setter
+	setter kernel.Targeter
 }
 
 func NewRoute[T any](
 	picker kernel.Picker[T], handler kernel.Handler[T, any],
-	setter kernel.Setter, logger log.Logger,
+	setter kernel.Targeter, logger log.Logger,
 ) *Route[T] {
 	return &Route[T]{
 		params:  param.NewRoute(picker),

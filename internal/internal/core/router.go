@@ -10,13 +10,13 @@ import (
 
 type Router[T any] struct {
 	params  *param.Route[T]
-	setter  kernel.Setter
+	setter  kernel.Targeter
 	handler *internal.Handler[T]
 }
 
 func NewRouter[T any](
 	handler kernel.Handler[T, any], params *param.Route[T],
-	setter kernel.Setter, logger log.Logger,
+	setter kernel.Targeter, logger log.Logger,
 ) *Router[T] {
 	return &Router[T]{
 		params:  params,

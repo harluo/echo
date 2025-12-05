@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Setter interface {
+type Targeter interface {
 	GET(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
 
 	PUT(path string, h echo.HandlerFunc, m ...echo.MiddlewareFunc) *echo.Route
