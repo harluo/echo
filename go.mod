@@ -31,7 +31,7 @@ require (
 	github.com/goexl/env v0.0.2 // indirect
 	github.com/goexl/exception v0.0.4 // indirect
 	github.com/goexl/gfx v0.2.8 // indirect
-	github.com/goexl/structer v0.1.9 // indirect
+	github.com/goexl/structer v0.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/harluo/boot v1.7.8 // indirect
 	github.com/harluo/config v0.0.8 // indirect
