@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/goexl/log"
-	"github.com/harluo/echo/internal/internal/builder"
 	"github.com/harluo/echo/internal/internal/kernel"
 	"github.com/labstack/echo/v4"
 )
@@ -25,6 +24,22 @@ func (g *Group) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	}
 }
 
-func (g *Group) Route(picker kernel.Picker[any], handler kernel.Handler[any, any]) *builder.Route[any] {
-	return builder.NewRoute(picker, handler, g.group, g.logger)
+func (g *Group) get() kernel.Setter {
+	return g.group.GET
+}
+
+func (g *Group) post() kernel.Setter {
+	return g.group.POST
+}
+
+func (g *Group) put() kernel.Setter {
+	return g.group.PUT
+}
+
+func (g *Group) delete() kernel.Setter {
+	return g.group.DELETE
+}
+
+func (g *Group) options() kernel.Setter {
+	return g.group.OPTIONS
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/goexl/log"
 	"github.com/harluo/echo/internal/core/internal"
-	"github.com/harluo/echo/internal/internal/builder"
 	"github.com/harluo/echo/internal/internal/kernel"
 	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
@@ -35,9 +34,13 @@ func newServer(
 }
 
 func (s *Server) Start(_ context.Context, router Router, routers ...Router) error {
-	router.Route(s)
+	for _, binder := range router.Routes(s) {
+		binder.bind()
+	}
 	for _, optional := range routers {
-		optional.Route(s)
+		for _, binder := range optional.Routes(s) {
+			binder.bind()
+		}
 	}
 
 	return s.echo.StartServer(s.server.Http())
@@ -57,6 +60,22 @@ func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	return NewGroup(s.echo.Group(prefix, middles...), s.logger)
 }
 
-func (s *Server) Route(picker kernel.Picker[any], handler kernel.Handler[any, any]) *builder.Route[any] {
-	return builder.NewRoute(picker, handler, s.echo, s.logger)
+func (s *Server) get() kernel.Setter {
+	return s.echo.GET
+}
+
+func (s *Server) post() kernel.Setter {
+	return s.echo.POST
+}
+
+func (s *Server) put() kernel.Setter {
+	return s.echo.PUT
+}
+
+func (s *Server) delete() kernel.Setter {
+	return s.echo.DELETE
+}
+
+func (s *Server) options() kernel.Setter {
+	return s.echo.OPTIONS
 }

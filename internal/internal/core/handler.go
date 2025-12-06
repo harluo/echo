@@ -1,62 +1,57 @@
-package internal
+package core
 
 import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/goexl/gox"
-	"github.com/goexl/gox/field"
-	"github.com/goexl/log"
-	"github.com/harluo/echo/internal/internal/kernel"
 	"github.com/harluo/echo/internal/internal/param"
+	"github.com/harluo/echo/internal/kernel"
 	"github.com/labstack/echo/v4"
 )
 
-type Handler[T any] struct {
-	handler kernel.Handler[T, any]
-	params  *param.Route[T]
-	logger  log.Logger
+type Handler[Q any, S any] struct {
+	handler kernel.Handler[Q, S]
+	params  *param.Route[Q]
 }
 
-func NewHandler[T any](handler kernel.Handler[T, any], params *param.Route[T], logger log.Logger) *Handler[T] {
-	return &Handler[T]{
+func NewHandler[Q any, S any](handler kernel.Handler[Q, S], params *param.Route[Q]) *Handler[Q, S] {
+	return &Handler[Q, S]{
 		handler: handler,
 		params:  params,
-		logger:  logger,
 	}
 }
 
-func (h *Handler[T]) Handle() echo.HandlerFunc {
+func (h *Handler[Q, S]) Handle() echo.HandlerFunc {
 	return func(ctx echo.Context) (err error) {
-		context := kernel.NewContext(ctx, h.logger)
+		context := kernel.NewContext(ctx)
 
-		request := h.params.Picker(context) // 每次创建请求
-		fields := gox.Fields[any]{
+		request := new(Q) // 每次创建请求
+		/* todo fields := gox.Fields[any]{
 			field.New("request", request),
-		}
-		h.logger.Debug("收到请求", fields[0], fields[1:]...)
+		}*/
+		// todo h.logger.Debug("收到请求", fields[0], fields[1:]...)
 
 		if be := h.params.Binder(context, request); nil != be {
-			errors := fields.Add(field.Error(be))
+			// todo errors := fields.Add(field.Error(be))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    1,
 				"message": "数据格式有错误",
 			})
-			h.logger.Warn("绑定值出错", errors[0], errors[1:]...)
+			// todo h.logger.Warn("绑定值出错", errors[0], errors[1:]...)
 		} else if me := h.params.Defaulter(context, request); nil != me {
-			errors := fields.Add(field.Error(me))
+			// todo errors := fields.Add(field.Error(me))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    2,
 				"message": "数据不匹配",
 			})
-			h.logger.Warn("设置默认值出错", errors[0], errors[1:]...)
+			// todo h.logger.Warn("设置默认值出错", errors[0], errors[1:]...)
 		} else if ve := h.params.Validator(context, request); nil != ve {
-			errors := fields.Add(field.Error(ve))
+			// todo errors := fields.Add(field.Error(ve))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    3,
 				"message": "数据无效",
 			})
-			h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
+			// todo h.logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := h.handler(context, request); nil != he {
 			err = h.handleException(ctx, he)
 		} else {
@@ -67,7 +62,7 @@ func (h *Handler[T]) Handle() echo.HandlerFunc {
 	}
 }
 
-func (h *Handler[T]) handleException(ctx echo.Context, exception error) (err error) {
+func (h *Handler[Q, S]) handleException(ctx echo.Context, exception error) (err error) {
 	switch converted := exception.(type) {
 	case json.Marshaler:
 		if bytes, mje := converted.MarshalJSON(); nil == mje {

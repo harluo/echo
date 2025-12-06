@@ -4,26 +4,20 @@ import (
 	"context"
 	"time"
 
-	"github.com/goexl/log"
 	"github.com/labstack/echo/v4"
 )
 
 var _ context.Context = (*Context)(nil)
 
 type Context struct {
-	echo   echo.Context
-	ctx    context.Context
-	logger log.Logger
+	echo echo.Context
+	ctx  context.Context
 }
 
-func NewContext(
-	echo echo.Context,
-	logger log.Logger,
-) *Context {
+func NewContext(echo echo.Context) *Context {
 	return &Context{
-		echo:   echo,
-		ctx:    context.Background(),
-		logger: logger,
+		echo: echo,
+		ctx:  context.Background(),
 	}
 }
 
