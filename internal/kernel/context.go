@@ -21,6 +21,10 @@ func NewContext(echo echo.Context) *Context {
 	}
 }
 
+func (c *Context) HttpError(status int) error {
+	return echo.NewHTTPError(status)
+}
+
 func (c *Context) Echo() echo.Context {
 	return c.echo
 }
