@@ -8,10 +8,11 @@ import (
 )
 
 type Route[T any] struct {
-	Name    string
-	Path    string
-	Method  kernel.Method
-	Middles []echo.MiddlewareFunc
+	Name         string
+	Path         string
+	Method       kernel.Method
+	Asynchronous bool
+	Middles      []echo.MiddlewareFunc
 
 	Validator kernel.Validator[T]
 	Binder    kernel.Binder[T]
@@ -20,10 +21,11 @@ type Route[T any] struct {
 
 func NewRoute[T any]() *Route[T] {
 	return &Route[T]{
-		Name:    "",
-		Path:    "",
-		Method:  kernel.MethodGet,
-		Middles: make([]echo.MiddlewareFunc, 0),
+		Name:         "",
+		Path:         "",
+		Method:       kernel.MethodGet,
+		Asynchronous: false,
+		Middles:      make([]echo.MiddlewareFunc, 0),
 
 		Validator: func(ctx *kernel.Context, t *T) error {
 			return validator.New().StructCtx(ctx, t)

@@ -43,3 +43,7 @@ func (g *Group) delete() kernel.Setter {
 func (g *Group) options() kernel.Setter {
 	return g.group.OPTIONS
 }
+
+func (g *Group) getLogger() log.Logger {
+	return g.logger
+}

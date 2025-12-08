@@ -41,6 +41,13 @@ func (r *Route[Q, S]) Options() *Route[Q, S] {
 	return r.method(kernel.MethodOptions)
 }
 
+func (r *Route[Q, S]) Asynchronous() (route *Route[Q, S]) {
+	r.params.Asynchronous = true
+	route = r
+
+	return
+}
+
 func (r *Route[Q, S]) Validator(validator kernel.Validator[Q]) (route *Route[Q, S]) {
 	r.params.Validator = validator
 	route = r

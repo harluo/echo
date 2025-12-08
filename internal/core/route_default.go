@@ -28,17 +28,17 @@ func (r *RouteDefault[Q, S]) bind() {
 	var route *echo.Route
 	switch r.params.Method {
 	case kernel.MethodGet:
-		route = r.target.get()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.get()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	case kernel.MethodPost:
-		route = r.target.post()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.post()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	case kernel.MethodPut:
-		route = r.target.put()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.put()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	case kernel.MethodDelete:
-		route = r.target.delete()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.delete()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	case kernel.MethodOptions:
-		route = r.target.options()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.options()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	default:
-		route = r.target.get()(r.params.Path, r.handler.Handle(), r.params.Middles...)
+		route = r.target.get()(r.params.Path, r.handler.Handle(r.target.getLogger()), r.params.Middles...)
 	}
 	route.Name = r.params.Name
 

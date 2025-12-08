@@ -1,3 +1,3 @@
 package kernel
 
-type Handler[Q any, P any] func(*Context, *Q) (P, error)
+type Handler[Q any, S any] func(*Context, *Q) (*S, error)

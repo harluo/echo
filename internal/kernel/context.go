@@ -21,13 +21,6 @@ func NewContext(echo echo.Context) *Context {
 	}
 }
 
-func (c *Context) Status(status int, message string, data any) error {
-	return echo.NewHTTPError(status, map[string]any{
-		"message": message,
-		"data":    data,
-	})
-}
-
 func (c *Context) Echo() echo.Context {
 	return c.echo
 }

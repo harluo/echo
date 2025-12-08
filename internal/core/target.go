@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/goexl/log"
 	"github.com/harluo/echo/internal/internal/kernel"
 )
 
@@ -14,4 +15,6 @@ type Target interface {
 	delete() kernel.Setter
 
 	options() kernel.Setter
+
+	getLogger() log.Logger
 }

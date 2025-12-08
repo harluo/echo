@@ -79,3 +79,7 @@ func (s *Server) delete() kernel.Setter {
 func (s *Server) options() kernel.Setter {
 	return s.echo.OPTIONS
 }
+
+func (s *Server) getLogger() log.Logger {
+	return s.logger
+}
