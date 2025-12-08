@@ -52,13 +52,10 @@ func (h *Handler[Q, S]) Handle(logger log.Logger) echo.HandlerFunc {
 			errors := fields.Add(field.Error(ve))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    3,
-				"message": "数据无效",
+				"message": "数据检查无效",
 			})
 			logger.Warn("数据验证出错", errors[0], errors[1:]...)
-		}
-
-		// 逻辑处理
-		if rsp, he := h.handler(context, request); nil != he {
+		} else if rsp, he := h.handler(context, request); nil != he {
 			err = h.handleError(ctx, he)
 		} else if nil == rsp {
 			err = h.handleException(ctx, request)
