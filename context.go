@@ -1,8 +1,8 @@
 package echo
 
 import (
-	"github.com/harluo/echo/internal/core"
+	"github.com/harluo/echo/internal/kernel"
 )
 
 // Context 上下文
-type Context = core.Context
+type Context = kernel.Context

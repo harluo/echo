@@ -2,6 +2,7 @@ package kernel
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -21,8 +22,14 @@ func NewContext(echo echo.Context) *Context {
 	}
 }
 
-func (c *Context) HttpError(status int) error {
-	return echo.NewHTTPError(status)
+func (c *Context) HttpError(status int, data any) (err error) {
+	if bytes, me := json.Marshal(data); nil != me {
+		err = me
+	} else {
+		err = echo.NewHTTPError(status, bytes)
+	}
+
+	return
 }
 
 func (c *Context) Echo() echo.Context {
