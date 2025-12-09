@@ -86,6 +86,8 @@ func (h *Handler[Q, S]) handleException(ctx echo.Context, request *Q) error {
 	switch method {
 	case "GET":
 		code = http.StatusNoContent
+	default:
+		code = http.StatusNoContent
 	}
 
 	return ctx.JSON(code, map[string]any{
