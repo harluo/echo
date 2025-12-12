@@ -3,7 +3,7 @@ module github.com/harluo/echo
 go 1.25
 
 require (
-	github.com/go-playground/validator/v10 v10.28.0
+	github.com/go-playground/validator/v10 v10.29.0
 	github.com/goexl/gox v1.9.2
 	github.com/goexl/log v0.1.0
 	github.com/goexl/mengpo v0.3.2
