@@ -30,6 +30,8 @@ func (h *Handler[Q, S]) Handle(logger log.Logger) echo.HandlerFunc {
 
 		request := new(Q) // 每次创建请求
 		fields := gox.Fields[any]{
+			field.New("url", ctx.Request().URL),
+			field.New("method", ctx.Request().Method),
 			field.New("request", request),
 		}
 		logger.Debug("收到请求", fields[0], fields[1:]...)
