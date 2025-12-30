@@ -2,7 +2,8 @@ package core
 
 import (
 	"github.com/goexl/log"
-	"github.com/harluo/echo/internal/internal/kernel"
+	"github.com/harluo/echo/internal/internal/util"
+	"github.com/harluo/echo/internal/kernel"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,29 +19,34 @@ func NewGroup(group *echo.Group, logger log.Logger) *Group {
 	}
 }
 
-func (g *Group) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
+func (g *Group) Group(prefix string, processers ...kernel.Processer) *Group {
+	middles := make([]echo.MiddlewareFunc, 0, len(processers))
+	for _, processer := range processers {
+		middles = append(middles, util.NewProcesser(processer))
+	}
+
 	return &Group{
 		group: g.group.Group(prefix, middles...),
 	}
 }
 
-func (g *Group) get() kernel.Setter {
+func (g *Group) get() util.Setter {
 	return g.group.GET
 }
 
-func (g *Group) post() kernel.Setter {
+func (g *Group) post() util.Setter {
 	return g.group.POST
 }
 
-func (g *Group) put() kernel.Setter {
+func (g *Group) put() util.Setter {
 	return g.group.PUT
 }
 
-func (g *Group) delete() kernel.Setter {
+func (g *Group) delete() util.Setter {
 	return g.group.DELETE
 }
 
-func (g *Group) options() kernel.Setter {
+func (g *Group) options() util.Setter {
 	return g.group.OPTIONS
 }
 

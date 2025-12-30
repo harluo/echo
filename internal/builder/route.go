@@ -3,8 +3,8 @@ package builder
 import (
 	"github.com/harluo/echo/internal/core"
 	"github.com/harluo/echo/internal/internal/param"
+	"github.com/harluo/echo/internal/internal/util"
 	"github.com/harluo/echo/internal/kernel"
-	"github.com/labstack/echo/v4"
 )
 
 type Route[Q any, S any] struct {
@@ -83,9 +83,11 @@ func (r *Route[Q, S]) Name(name string) (route *Route[Q, S]) {
 	return
 }
 
-func (r *Route[Q, S]) Middleware(middleware echo.MiddlewareFunc, optionals ...echo.MiddlewareFunc) (route *Route[Q, S]) {
-	r.params.Middles = append(r.params.Middles, middleware)
-	r.params.Middles = append(r.params.Middles, optionals...)
+func (r *Route[Q, S]) Middleware(required kernel.Processer, optionals ...kernel.Processer) (route *Route[Q, S]) {
+	r.params.Middles = append(r.params.Middles, util.NewProcesser(required))
+	for _, optional := range optionals {
+		r.params.Middles = append(r.params.Middles, util.NewProcesser(optional))
+	}
 	route = r
 
 	return

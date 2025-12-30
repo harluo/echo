@@ -1,7 +1,6 @@
 package core
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/goexl/gox"
@@ -58,7 +57,7 @@ func (h *Handler[Q, S]) Handle(logger log.Logger) echo.HandlerFunc {
 			})
 			logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := h.handler(context, request); nil != he {
-			err = h.handleError(ctx, he)
+			err = he
 		} else if nil == rsp {
 			err = h.handleException(ctx, request)
 		} else {
@@ -96,19 +95,4 @@ func (h *Handler[Q, S]) handleException(ctx echo.Context, request *Q) error {
 		"message": "无返回数据",
 		"data":    request,
 	})
-}
-
-func (h *Handler[Q, S]) handleError(ctx echo.Context, original error) (err error) {
-	switch converted := original.(type) {
-	case json.Marshaler:
-		if bytes, mje := converted.MarshalJSON(); nil == mje {
-			err = ctx.JSONBlob(http.StatusBadGateway, bytes)
-		} else {
-			err = original
-		}
-	default:
-		err = original
-	}
-
-	return
 }

@@ -2,19 +2,19 @@ package core
 
 import (
 	"github.com/goexl/log"
-	"github.com/harluo/echo/internal/internal/kernel"
+	"github.com/harluo/echo/internal/internal/util"
 )
 
 type Target interface {
-	get() kernel.Setter
+	get() util.Setter
 
-	post() kernel.Setter
+	post() util.Setter
 
-	put() kernel.Setter
+	put() util.Setter
 
-	delete() kernel.Setter
+	delete() util.Setter
 
-	options() kernel.Setter
+	options() util.Setter
 
 	getLogger() log.Logger
 }
