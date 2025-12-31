@@ -15,6 +15,6 @@ func NewNext(next echo.HandlerFunc) *Next {
 	}
 }
 
-func (n *Next) Next(ctx *kernel.Context) error {
+func (n *Next) Execute(ctx *kernel.Context) error {
 	return n.next(ctx.Echo())
 }
