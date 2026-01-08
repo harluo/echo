@@ -3,11 +3,11 @@ module github.com/harluo/echo
 go 1.25
 
 require (
-	github.com/go-playground/validator/v10 v10.30.1
 	github.com/goexl/gox v1.9.2
 	github.com/goexl/log v0.1.0
 	github.com/goexl/mengpo v0.3.2
-	github.com/goexl/xiren v0.0.9
+	github.com/goexl/validate v0.0.2
+	github.com/goexl/validator v0.0.2
 	github.com/harluo/di v0.0.5
 	github.com/harluo/httpd v0.0.4
 	github.com/labstack/echo/v4 v4.14.0
@@ -27,11 +27,13 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.12 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.30.1 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
 	github.com/goexl/env v0.0.2 // indirect
 	github.com/goexl/exception v0.0.4 // indirect
 	github.com/goexl/gfx v0.2.8 // indirect
 	github.com/goexl/structer v0.2.0 // indirect
+	github.com/goexl/xiren v0.0.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/harluo/boot v1.7.8 // indirect
 	github.com/harluo/config v0.0.8 // indirect

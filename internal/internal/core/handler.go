@@ -6,6 +6,8 @@ import (
 	"github.com/goexl/gox"
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
+	"github.com/goexl/validate"
+	"github.com/harluo/echo/internal/internal/core/internal"
 	"github.com/harluo/echo/internal/internal/param"
 	"github.com/harluo/echo/internal/kernel"
 	"github.com/labstack/echo/v4"
@@ -23,9 +25,15 @@ func NewHandler[Q any, S any](handler kernel.Handler[Q, S], params *param.Route[
 	}
 }
 
-func (h *Handler[Q, S]) Handle(logger log.Logger) echo.HandlerFunc {
+func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) echo.HandlerFunc {
 	return func(ctx echo.Context) (err error) {
 		context := kernel.NewContext(ctx)
+		if initialer := h.params.Initialer; initialer != nil {
+			initialer.Init(context)
+		}
+		if value := context.Value(internal.ContextConverter); value == nil {
+			context.With("converter", h)
+		}
 
 		request := new(Q) // 每次创建请求
 		fields := gox.Fields[any]{
@@ -49,11 +57,12 @@ func (h *Handler[Q, S]) Handle(logger log.Logger) echo.HandlerFunc {
 				"message": "数据不匹配",
 			})
 			logger.Warn("设置默认值出错", errors[0], errors[1:]...)
-		} else if ve := h.params.Validator(context, request); nil != ve {
+		} else if ve := validator.Validate(context, request); nil != ve {
 			errors := fields.Add(field.Error(ve))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    3,
 				"message": "数据检查无效",
+				"data":    ve,
 			})
 			logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := h.handler(context, request); nil != he {
@@ -95,4 +104,8 @@ func (h *Handler[Q, S]) handleException(ctx echo.Context, request *Q) error {
 		"message": "无返回数据",
 		"data":    request,
 	})
+}
+
+func (h *Handler[Q, S]) Convert(from string) string {
+	return gox.String(from).Switch().Camel().Build().Case()
 }

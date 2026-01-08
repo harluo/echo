@@ -7,21 +7,25 @@ import (
 
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
+	"github.com/goexl/validate"
+	"github.com/goexl/validator"
+	"github.com/harluo/di"
 	"github.com/harluo/echo/internal/core/internal"
+	"github.com/harluo/echo/internal/core/internal/get"
 	"github.com/harluo/echo/internal/internal/util"
 	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
 )
 
 type Server struct {
-	echo   *echo.Echo
-	http   *httpd.Server
-	logger log.Logger
+	echo      *echo.Echo
+	http      *httpd.Server
+	validator validate.Validator
+	logger    log.Logger
 }
 
 func newServer(
 	http *httpd.Server,
-	validator *internal.Validator,
 	logger *internal.Logger,
 ) (server *Server) {
 	server = new(Server)
@@ -30,10 +34,12 @@ func newServer(
 
 	e := echo.New()
 	e.HideBanner = true                      // 禁用标志输出
-	e.Validator = validator                  // 校验器
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
 	server.echo = e
+	if ie := di.New().Instance().Get(server.detectValidator).Build().Inject(); ie != nil { // 注入校验器
+		server.validator = validator.New()
+	}
 
 	return
 }
@@ -62,7 +68,7 @@ func (s *Server) Stop(ctx context.Context) (err error) {
 }
 
 func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
-	return NewGroup(s.echo.Group(prefix, middles...), s.logger)
+	return NewGroup(s.echo.Group(prefix, middles...), s.validator, s.logger)
 }
 
 func (s *Server) errorHandler(err error, c echo.Context) {
@@ -110,4 +116,14 @@ func (s *Server) options() util.Setter {
 
 func (s *Server) getLogger() log.Logger {
 	return s.logger
+}
+
+func (s *Server) getValidator() validate.Validator {
+	return s.validator
+}
+
+func (s *Server) detectValidator(gv get.Validator) {
+	if detected := gv.Validator; detected == nil {
+		s.validator = validator.New()
+	}
 }

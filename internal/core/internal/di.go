@@ -6,7 +6,6 @@ import (
 
 func init() {
 	di.New().Instance().Put(
-		newValidator,
 		newLogger,
 	).Build().Apply()
 }

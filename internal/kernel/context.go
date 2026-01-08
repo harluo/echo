@@ -52,3 +52,10 @@ func (c *Context) Method() string {
 func (c *Context) Bind(target any) error {
 	return c.echo.Bind(target)
 }
+
+func (c *Context) With(key string, value any) (ctx *Context) {
+	c.ctx = context.WithValue(c.ctx, key, value)
+	ctx = c
+
+	return
+}

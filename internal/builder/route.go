@@ -48,8 +48,8 @@ func (r *Route[Q, S]) Asynchronous() (route *Route[Q, S]) {
 	return
 }
 
-func (r *Route[Q, S]) Validator(validator kernel.Validator[Q]) (route *Route[Q, S]) {
-	r.params.Validator = validator
+func (r *Route[Q, S]) Initialer(initialer kernel.Initialer) (route *Route[Q, S]) {
+	r.params.Initialer = initialer
 	route = r
 
 	return
