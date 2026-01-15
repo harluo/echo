@@ -48,6 +48,9 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    1,
 				"message": "数据格式有错误",
+				"data": map[string]any{
+					"error": be.Error(),
+				},
 			})
 			logger.Warn("绑定值出错", errors[0], errors[1:]...)
 		} else if me := h.params.Defaulter(context, request); nil != me {
@@ -55,6 +58,9 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    2,
 				"message": "数据不匹配",
+				"data": map[string]any{
+					"error": me.Error(),
+				},
 			})
 			logger.Warn("设置默认值出错", errors[0], errors[1:]...)
 		} else if ve := validator.Validate(context, request); nil != ve {
