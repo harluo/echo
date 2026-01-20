@@ -125,5 +125,7 @@ func (s *Server) getValidator() validate.Validator {
 func (s *Server) detectValidator(gv get.Validator) {
 	if detected := gv.Validator; detected == nil {
 		s.validator = validator.New()
+	} else {
+		s.validator = detected
 	}
 }
