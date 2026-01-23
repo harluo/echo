@@ -36,6 +36,8 @@ func (r *RouteDefault[Q, S]) bind() {
 		route = r.target.post()(r.params.Path, r.handler.Handle(validator, logger), r.params.Middles...)
 	case kernel.MethodPut:
 		route = r.target.put()(r.params.Path, r.handler.Handle(validator, logger), r.params.Middles...)
+	case kernel.MethodPatch:
+		route = r.target.patch()(r.params.Path, r.handler.Handle(validator, logger), r.params.Middles...)
 	case kernel.MethodDelete:
 		route = r.target.delete()(r.params.Path, r.handler.Handle(validator, logger), r.params.Middles...)
 	case kernel.MethodOptions:

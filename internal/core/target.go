@@ -13,6 +13,8 @@ type Target interface {
 
 	put() util.Setter
 
+	patch() util.Setter
+
 	delete() util.Setter
 
 	options() util.Setter

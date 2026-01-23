@@ -33,6 +33,10 @@ func (r *Route[Q, S]) Put() *Route[Q, S] {
 	return r.method(kernel.MethodPut)
 }
 
+func (r *Route[Q, S]) Patch() *Route[Q, S] {
+	return r.method(kernel.MethodPatch)
+}
+
 func (r *Route[Q, S]) Delete() *Route[Q, S] {
 	return r.method(kernel.MethodDelete)
 }

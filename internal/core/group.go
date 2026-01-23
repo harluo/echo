@@ -45,6 +45,10 @@ func (g *Group) put() util.Setter {
 	return g.group.PUT
 }
 
+func (g *Group) patch() util.Setter {
+	return g.group.PATCH
+}
+
 func (g *Group) delete() util.Setter {
 	return g.group.DELETE
 }

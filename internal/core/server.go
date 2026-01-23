@@ -106,6 +106,10 @@ func (s *Server) put() util.Setter {
 	return s.echo.PUT
 }
 
+func (s *Server) patch() util.Setter {
+	return s.echo.PATCH
+}
+
 func (s *Server) delete() util.Setter {
 	return s.echo.DELETE
 }
