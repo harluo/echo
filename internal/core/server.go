@@ -72,7 +72,7 @@ func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 }
 
 func (s *Server) Addr() string {
-	return s.http.Port()
+	return s.http.Addr()
 }
 
 func (s *Server) errorHandler(err error, c echo.Context) {

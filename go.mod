@@ -9,7 +9,7 @@ require (
 	github.com/goexl/validate v0.0.2
 	github.com/goexl/validator v0.0.2
 	github.com/harluo/di v0.0.5
-	github.com/harluo/httpd v0.0.4
+	github.com/harluo/httpd v0.0.5
 	github.com/labstack/echo/v4 v4.14.0
 	github.com/labstack/gommon v0.4.2
 	github.com/stretchr/testify v1.11.1
