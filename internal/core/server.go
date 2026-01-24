@@ -71,6 +71,10 @@ func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
 	return NewGroup(s.echo.Group(prefix, middles...), s.validator, s.logger)
 }
 
+func (s *Server) Addr() string {
+	return s.http.Port()
+}
+
 func (s *Server) errorHandler(err error, c echo.Context) {
 	if c.Response().Committed {
 		return
