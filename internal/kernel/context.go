@@ -2,6 +2,7 @@ package kernel
 
 import (
 	"context"
+	"io"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -43,6 +44,16 @@ func (c *Context) Value(key any) any {
 
 func (c *Context) Header(key string) string {
 	return c.echo.Request().Header.Get(key)
+}
+
+func (c *Context) Body() (body *[]byte, err error) {
+	if bytes, rae := io.ReadAll(c.echo.Request().Body); rae != nil {
+		err = rae
+	} else {
+		body = &bytes
+	}
+
+	return
 }
 
 func (c *Context) Method() string {
