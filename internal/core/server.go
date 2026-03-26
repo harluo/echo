@@ -145,7 +145,13 @@ func (s *Server) detectValidator(gv get.Validator) {
 }
 
 func (s *Server) requestLog(_ echo.Context, values middleware.RequestLoggerValues) (err error) {
-	s.logger.Debug("收到请求", field.New("uri", values.URI), field.New("status", values.Status))
+	s.logger.Debug(
+		"收到请求",
+		field.New("uri", values.URI),
+		field.New("status", values.Status),
+		field.New("size.request", values.ContentLength),
+		field.New("size.response", values.ResponseSize),
+	)
 
 	return
 }
