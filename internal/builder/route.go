@@ -8,16 +8,16 @@ import (
 )
 
 type Route[Q any, S any] struct {
-	targeter core.Target
-	params   *param.Route[Q]
-	handler  kernel.Handler[Q, S]
+	target  core.Target
+	params  *param.Route[Q]
+	handler kernel.Handler[Q, S]
 }
 
-func NewRoute[Q any, S any](targeter core.Target, handler kernel.Handler[Q, S]) *Route[Q, S] {
+func NewRoute[Q any, S any](target core.Target, handler kernel.Handler[Q, S]) *Route[Q, S] {
 	return &Route[Q, S]{
-		targeter: targeter,
-		params:   param.NewRoute[Q](),
-		handler:  handler,
+		target:  target,
+		params:  param.NewRoute[Q](),
+		handler: handler,
 	}
 }
 
@@ -47,6 +47,27 @@ func (r *Route[Q, S]) Options() *Route[Q, S] {
 
 func (r *Route[Q, S]) Asynchronous() (route *Route[Q, S]) {
 	r.params.Asynchronous = true
+	route = r
+
+	return
+}
+
+func (r *Route[Q, S]) Invalidate() (route *Route[Q, S]) {
+	r.params.Validate = false
+	route = r
+
+	return
+}
+
+func (r *Route[Q, S]) Nonbinding() (route *Route[Q, S]) {
+	r.params.Binding = false
+	route = r
+
+	return
+}
+
+func (r *Route[Q, S]) Optional() (route *Route[Q, S]) {
+	r.params.Default = false
 	route = r
 
 	return
@@ -98,7 +119,7 @@ func (r *Route[Q, S]) Middleware(required kernel.Processer, optionals ...kernel.
 }
 
 func (r *Route[Q, S]) Build() *core.RouteDefault[Q, S] {
-	return core.NewRouteDefault(r.targeter, r.handler, r.params)
+	return core.NewRouteDefault(r.target, r.handler, r.params)
 }
 
 func (r *Route[Q, S]) method(method kernel.Method) (route *Route[Q, S]) {

@@ -41,9 +41,8 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 			field.New("method", ctx.Request().Method),
 			field.New("request", request),
 		}
-		logger.Debug("收到请求", fields[0], fields[1:]...)
 
-		if be := h.params.Binder(context, request); nil != be {
+		if be := h.bindData(context, request); nil != be {
 			errors := fields.Add(field.Error(be))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    1,
@@ -53,7 +52,7 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 				},
 			})
 			logger.Warn("绑定值出错", errors[0], errors[1:]...)
-		} else if me := h.params.Defaulter(context, request); nil != me {
+		} else if me := h.setDefault(context, request); nil != me {
 			errors := fields.Add(field.Error(me))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    2,
@@ -63,7 +62,7 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 				},
 			})
 			logger.Warn("设置默认值出错", errors[0], errors[1:]...)
-		} else if ve := validator.Validate(context, request); nil != ve {
+		} else if ve := h.validate(context, request, validator); nil != ve {
 			errors := fields.Add(field.Error(ve))
 			err = ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
 				"code":    3,
@@ -114,4 +113,28 @@ func (h *Handler[Q, S]) handleException(ctx echo.Context, request *Q) error {
 
 func (h *Handler[Q, S]) Convert(from string) string {
 	return gox.String(from).Switch().Camel().Build().Case()
+}
+
+func (h *Handler[Q, S]) bindData(ctx *kernel.Context, req *Q) (err error) {
+	if h.params.Binding {
+		err = h.params.Binder(ctx, req)
+	}
+
+	return
+}
+
+func (h *Handler[Q, S]) setDefault(ctx *kernel.Context, req *Q) (err error) {
+	if h.params.Default {
+		err = h.params.Defaulter(ctx, req)
+	}
+
+	return
+}
+
+func (h *Handler[Q, S]) validate(ctx *kernel.Context, req *Q, validator validate.Validator) (err error) {
+	if h.params.Validate {
+		err = validator.Validate(ctx, req)
+	}
+
+	return
 }

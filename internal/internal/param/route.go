@@ -11,6 +11,9 @@ type Route[T any] struct {
 	Path         string
 	Method       kernel.Method
 	Asynchronous bool
+	Binding      bool
+	Validate     bool
+	Default      bool
 	Middles      []echo.MiddlewareFunc
 
 	Initialer kernel.Initialer
@@ -24,6 +27,9 @@ func NewRoute[T any]() *Route[T] {
 		Path:         "",
 		Method:       kernel.MethodGet,
 		Asynchronous: false,
+		Binding:      true,
+		Validate:     true,
+		Default:      true,
 		Middles:      make([]echo.MiddlewareFunc, 0),
 
 		Binder: func(ctx *kernel.Context, t *T) (err error) {

@@ -15,6 +15,7 @@ import (
 	"github.com/harluo/echo/internal/internal/util"
 	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
@@ -36,6 +37,11 @@ func newServer(
 	e.HideBanner = true                      // 禁用标志输出
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:     true,
+		LogURI:        true,
+		LogValuesFunc: server.requestLog,
+	}))
 	server.echo = e
 	if ie := di.New().Instance().Get(server.detectValidator).Build().Inject(); ie != nil { // 注入校验器
 		server.validator = validator.New()
@@ -136,4 +142,10 @@ func (s *Server) detectValidator(gv get.Validator) {
 	} else {
 		s.validator = detected
 	}
+}
+
+func (s *Server) requestLog(_ echo.Context, values middleware.RequestLoggerValues) (err error) {
+	s.logger.Debug("收到请求", field.New("uri", values.URI), field.New("status", values.Status))
+
+	return
 }
