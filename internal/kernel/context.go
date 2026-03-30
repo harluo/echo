@@ -3,6 +3,7 @@ package kernel
 import (
 	"context"
 	"io"
+	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -26,7 +27,7 @@ func (c *Context) Echo() echo.Context {
 	return c.echo
 }
 
-func (c *Context) Writer() io.Writer {
+func (c *Context) Writer() http.ResponseWriter {
 	return c.echo.Response().Writer
 }
 
