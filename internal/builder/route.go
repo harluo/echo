@@ -52,7 +52,7 @@ func (r *Route[Q, S]) Asynchronous() (route *Route[Q, S]) {
 	return
 }
 
-func (r *Route[Q, S]) Invalidate() (route *Route[Q, S]) {
+func (r *Route[Q, S]) Novalidate() (route *Route[Q, S]) {
 	r.params.Validate = false
 	route = r
 
@@ -66,7 +66,7 @@ func (r *Route[Q, S]) Nonbinding() (route *Route[Q, S]) {
 	return
 }
 
-func (r *Route[Q, S]) Optional() (route *Route[Q, S]) {
+func (r *Route[Q, S]) Nondefault() (route *Route[Q, S]) {
 	r.params.Default = false
 	route = r
 

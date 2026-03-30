@@ -26,6 +26,42 @@ func (c *Context) Echo() echo.Context {
 	return c.echo
 }
 
+func (c *Context) Queries() (query *map[string]string, err error) {
+	data := make(map[string]string)
+	query = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindQueryParams(c.echo, query)
+
+	return
+}
+
+func (c *Context) Bodies() (body *map[string]any, err error) {
+	data := make(map[string]any)
+	body = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindBody(c.echo, body)
+
+	return
+}
+
+func (c *Context) Headers() (body *map[string]string, err error) {
+	data := make(map[string]string)
+	body = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindHeaders(c.echo, &body)
+
+	return
+}
+
+func (c *Context) Paths() (path *map[string]any, err error) {
+	data := make(map[string]any)
+	path = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindPathParams(c.echo, &path)
+
+	return
+}
+
 func (c *Context) Deadline() (time.Time, bool) {
 	return c.ctx.Deadline()
 }
@@ -46,11 +82,11 @@ func (c *Context) Header(key string) string {
 	return c.echo.Request().Header.Get(key)
 }
 
-func (c *Context) Body() (body *[]byte, err error) {
+func (c *Context) Raw() (raw *[]byte, err error) {
 	if bytes, rae := io.ReadAll(c.echo.Request().Body); rae != nil {
 		err = rae
 	} else {
-		body = &bytes
+		raw = &bytes
 	}
 
 	return

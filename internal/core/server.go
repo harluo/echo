@@ -38,9 +38,12 @@ func newServer(
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogStatus:     true,
-		LogURI:        true,
-		LogValuesFunc: server.requestLog,
+		LogStatus:        true,
+		LogURI:           true,
+		LogMethod:        true,
+		LogContentLength: true,
+		LogResponseSize:  true,
+		LogValuesFunc:    server.responseLog,
 	}))
 	server.echo = e
 	if ie := di.New().Instance().Get(server.detectValidator).Build().Inject(); ie != nil { // 注入校验器
@@ -144,9 +147,9 @@ func (s *Server) detectValidator(gv get.Validator) {
 	}
 }
 
-func (s *Server) requestLog(_ echo.Context, values middleware.RequestLoggerValues) (err error) {
+func (s *Server) responseLog(_ echo.Context, values middleware.RequestLoggerValues) (err error) {
 	s.logger.Debug(
-		"收到请求",
+		"响应请求",
 		field.New("method", values.Method),
 		field.New("uri", values.URI),
 		field.New("status", values.Status),
