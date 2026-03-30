@@ -26,6 +26,10 @@ func (c *Context) Echo() echo.Context {
 	return c.echo
 }
 
+func (c *Context) Writer() io.Writer {
+	return c.echo.Response().Writer
+}
+
 func (c *Context) Queries() (query *map[string]string, err error) {
 	data := make(map[string]string)
 	query = &data
