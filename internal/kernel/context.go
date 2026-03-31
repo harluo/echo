@@ -58,8 +58,8 @@ func (c *Context) Headers() (body *map[string]string, err error) {
 	return
 }
 
-func (c *Context) Paths() (path *map[string]any, err error) {
-	data := make(map[string]any)
+func (c *Context) Paths() (path *map[string]string, err error) {
+	data := make(map[string]string)
 	path = &data
 	binder := new(echo.DefaultBinder)
 	err = binder.BindPathParams(c.echo, &path)
