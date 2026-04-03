@@ -7,6 +7,7 @@ import (
 	"github.com/goexl/gox/field"
 	"github.com/goexl/log"
 	"github.com/goexl/validate"
+	"github.com/harluo/echo/internal/internal/constant"
 	"github.com/harluo/echo/internal/internal/core/internal"
 	"github.com/harluo/echo/internal/internal/param"
 	"github.com/harluo/echo/internal/kernel"
@@ -72,10 +73,12 @@ func (h *Handler[Q, S]) Handle(validator validate.Validator, logger log.Logger) 
 			logger.Warn("数据验证出错", errors[0], errors[1:]...)
 		} else if rsp, he := h.handler(context, request); nil != he {
 			err = he
-		} else if nil == rsp {
-			err = h.handleException(ctx, request)
-		} else {
+		} else if value := context.Value(constant.ContextResponse); value == nil && rsp != nil {
 			err = h.handleSuccess(ctx, rsp)
+		} else if response, ok := value.(bool); ok && response && rsp != nil {
+			err = h.handleSuccess(ctx, rsp)
+		} else if rsp == nil && response {
+			err = h.handleException(ctx, request)
 		}
 
 		return

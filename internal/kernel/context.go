@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/harluo/echo/internal/internal/constant"
 	"github.com/labstack/echo/v4"
 )
 
@@ -81,6 +82,10 @@ func (c *Context) Err() error {
 
 func (c *Context) Value(key any) any {
 	return c.ctx.Value(key)
+}
+
+func (c *Context) Unresponsive() {
+	c.ctx = context.WithValue(c.ctx, constant.ContextResponse, false)
 }
 
 func (c *Context) Header(key string) string {
