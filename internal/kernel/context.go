@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/harluo/echo/internal/internal/constant"
-	"github.com/labstack/echo/v4"
 )
 
 var _ context.Context = (*Context)(nil)
@@ -50,11 +49,11 @@ func (c *Context) Bodies() (body *map[string]any, err error) {
 	return
 }
 
-func (c *Context) Headers() (body *map[string]string, err error) {
+func (c *Context) Headers() (headers *map[string]string, err error) {
 	data := make(map[string]string)
-	body = &data
+	headers = &data
 	binder := new(echo.DefaultBinder)
-	err = binder.BindHeaders(c.echo, &body)
+	err = binder.BindHeaders(c.echo, headers)
 
 	return
 }
