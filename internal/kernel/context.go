@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/harluo/echo/internal/internal/constant"
+	"github.com/labstack/echo/v4"
 )
 
 var _ context.Context = (*Context)(nil)
