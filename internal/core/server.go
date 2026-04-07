@@ -14,7 +14,6 @@ import (
 	"github.com/harluo/echo/internal/core/internal/get"
 	"github.com/harluo/echo/internal/internal/util"
 	"github.com/harluo/httpd"
-	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
@@ -37,6 +36,7 @@ func newServer(
 	e.HideBanner = true                      // 禁用标志输出
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
+	e.Use(middleware.Recover())              // 不要崩溃
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:        true,
 		LogURI:           true,
