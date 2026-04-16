@@ -28,6 +28,20 @@ func (c *Context) Echo() echo.Context {
 	return c.echo
 }
 
+func (c *Context) Render(code int, name string, data any) (err error) {
+	c.Unresponsive()
+	err = c.echo.Render(code, name, data)
+
+	return
+}
+
+func (c *Context) Redirect(code int, url string) (err error) {
+	c.Unresponsive()
+	err = c.echo.Redirect(code, url)
+
+	return
+}
+
 func (c *Context) Writer() http.ResponseWriter {
 	return c.echo.Response().Writer
 }
