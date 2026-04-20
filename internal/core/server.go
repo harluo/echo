@@ -85,7 +85,7 @@ func (s *Server) Renderer(renderer echo.Renderer) (server *Server) {
 }
 
 func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
-	return NewGroup(s.echo.Group(prefix, middles...), s.validator, s.logger)
+	return NewGroup(s.echo.Group(s.http.Path(prefix), middles...), s.validator, s.logger)
 }
 
 func (s *Server) Addr() string {
