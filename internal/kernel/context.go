@@ -3,6 +3,7 @@ package kernel
 import (
 	"context"
 	"io"
+	"net"
 	"net/http"
 	"time"
 
@@ -37,6 +38,10 @@ func (c *Context) Render(code int, name string, data any) (err error) {
 
 func (c *Context) IP() string {
 	return c.echo.RealIP()
+}
+
+func (c *Context) Net() net.IP {
+	return net.ParseIP(c.echo.RealIP())
 }
 
 func (c *Context) Redirect(code int, url string) (err error) {
