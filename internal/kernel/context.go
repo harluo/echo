@@ -40,7 +40,7 @@ func (c *Context) IP() string {
 	return c.echo.RealIP()
 }
 
-func (c *Context) Net() net.IP {
+func (c *Context) NIP() net.IP {
 	return net.ParseIP(c.echo.RealIP())
 }
 
