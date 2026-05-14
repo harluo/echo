@@ -35,6 +35,10 @@ func (c *Context) Render(code int, name string, data any) (err error) {
 	return
 }
 
+func (c *Context) IP() string {
+	return c.echo.RealIP()
+}
+
 func (c *Context) Redirect(code int, url string) (err error) {
 	c.Unresponsive()
 	err = c.echo.Redirect(code, url)
