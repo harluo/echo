@@ -37,7 +37,12 @@ func newServer(
 	e.HideBanner = true                      // 禁用标志输出
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
-	e.Use(middleware.Recover())              // 不要崩溃
+	e.IPExtractor = echo.ExtractIPFromXFFHeader(
+		echo.TrustLoopback(false),
+		echo.TrustLinkLocal(false),
+		echo.TrustPrivateNet(false),
+	)
+	e.Use(middleware.Recover()) // 不要崩溃
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogStatus:        true,
 		LogURI:           true,
