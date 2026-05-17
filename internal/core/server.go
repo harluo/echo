@@ -40,7 +40,7 @@ func newServer(
 	e.IPExtractor = echo.ExtractIPFromXFFHeader(
 		echo.TrustLoopback(false),
 		echo.TrustLinkLocal(false),
-		echo.TrustPrivateNet(false),
+		echo.TrustPrivateNet(true),
 	)
 	e.Use(middleware.Recover()) // 不要崩溃
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
