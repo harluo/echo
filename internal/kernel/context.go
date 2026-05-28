@@ -36,6 +36,10 @@ func (c *Context) Render(code int, name string, data any) (err error) {
 	return
 }
 
+func (c *Context) Path() string {
+	return c.echo.Path()
+}
+
 func (c *Context) IP() string {
 	return c.echo.RealIP()
 }
