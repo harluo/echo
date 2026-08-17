@@ -18,10 +18,16 @@ type Context struct {
 	ctx  context.Context
 }
 
-func NewContext(echo echo.Context) *Context {
+// NewContext 创建与 HTTP 请求生命周期绑定的业务上下文。
+func NewContext(source echo.Context) *Context {
+	ctx := context.Background()
+	if source != nil && source.Request() != nil {
+		ctx = source.Request().Context()
+	}
+
 	return &Context{
-		echo: echo,
-		ctx:  context.Background(),
+		echo: source,
+		ctx:  ctx,
 	}
 }
 
