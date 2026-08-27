@@ -29,7 +29,9 @@ func (g *Group) Group(prefix string, processers ...kernel.Processer) *Group {
 	}
 
 	return &Group{
-		group: g.group.Group(prefix, middles...),
+		group:     g.group.Group(prefix, middles...),
+		validator: g.validator,
+		logger:    g.logger,
 	}
 }
 

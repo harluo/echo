@@ -2,8 +2,12 @@ package kernel
 
 import (
 	"context"
+	"io"
+	"net"
+	"net/http"
 	"time"
 
+	"github.com/harluo/echo/internal/internal/constant"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,15 +18,87 @@ type Context struct {
 	ctx  context.Context
 }
 
-func NewContext(echo echo.Context) *Context {
+// NewContext 创建与 HTTP 请求生命周期绑定的业务上下文。
+func NewContext(source echo.Context) *Context {
+	ctx := context.Background()
+	if source != nil && source.Request() != nil {
+		ctx = source.Request().Context()
+	}
+
 	return &Context{
-		echo: echo,
-		ctx:  context.Background(),
+		echo: source,
+		ctx:  ctx,
 	}
 }
 
 func (c *Context) Echo() echo.Context {
 	return c.echo
+}
+
+func (c *Context) Render(code int, name string, data any) (err error) {
+	c.Unresponsive()
+	err = c.echo.Render(code, name, data)
+
+	return
+}
+
+func (c *Context) Path() string {
+	return c.echo.Path()
+}
+
+func (c *Context) IP() string {
+	return c.echo.RealIP()
+}
+
+func (c *Context) Nip() net.IP {
+	return net.ParseIP(c.echo.RealIP())
+}
+
+func (c *Context) Redirect(code int, url string) (err error) {
+	c.Unresponsive()
+	err = c.echo.Redirect(code, url)
+
+	return
+}
+
+func (c *Context) Writer() http.ResponseWriter {
+	return c.echo.Response().Writer
+}
+
+func (c *Context) Queries() (query *map[string]string, err error) {
+	data := make(map[string]string)
+	query = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindQueryParams(c.echo, query)
+
+	return
+}
+
+func (c *Context) Bodies() (body *map[string]any, err error) {
+	data := make(map[string]any)
+	body = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindBody(c.echo, body)
+
+	return
+}
+
+func (c *Context) Headers() (headers *map[string]string, err error) {
+	data := make(map[string]string)
+	headers = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindHeaders(c.echo, headers)
+
+	return
+}
+
+func (c *Context) Paths() (paths *map[string]string, err error) {
+	data := make(map[string]string)
+	paths = &data
+	binder := new(echo.DefaultBinder)
+	err = binder.BindPathParams(c.echo, paths)
+
+	return
 }
 
 func (c *Context) Deadline() (time.Time, bool) {
@@ -41,8 +117,22 @@ func (c *Context) Value(key any) any {
 	return c.ctx.Value(key)
 }
 
+func (c *Context) Unresponsive() {
+	c.ctx = context.WithValue(c.ctx, constant.ContextResponse, false)
+}
+
 func (c *Context) Header(key string) string {
 	return c.echo.Request().Header.Get(key)
+}
+
+func (c *Context) Raw() (raw *[]byte, err error) {
+	if bytes, rae := io.ReadAll(c.echo.Request().Body); rae != nil {
+		err = rae
+	} else {
+		raw = &bytes
+	}
+
+	return
 }
 
 func (c *Context) Method() string {

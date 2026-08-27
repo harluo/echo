@@ -15,6 +15,7 @@ import (
 	"github.com/harluo/echo/internal/internal/util"
 	"github.com/harluo/httpd"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type Server struct {
@@ -36,6 +37,20 @@ func newServer(
 	e.HideBanner = true                      // 禁用标志输出
 	e.Logger = logger                        // 日志
 	e.HTTPErrorHandler = server.errorHandler // 日志
+	e.IPExtractor = echo.ExtractIPFromXFFHeader(
+		echo.TrustLoopback(false),
+		echo.TrustLinkLocal(false),
+		echo.TrustPrivateNet(true),
+	)
+	e.Use(middleware.Recover()) // 不要崩溃
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogStatus:        true,
+		LogURI:           true,
+		LogMethod:        true,
+		LogContentLength: true,
+		LogResponseSize:  true,
+		LogValuesFunc:    server.responseLog,
+	}))
 	server.echo = e
 	if ie := di.New().Instance().Get(server.detectValidator).Build().Inject(); ie != nil { // 注入校验器
 		server.validator = validator.New()
@@ -67,8 +82,15 @@ func (s *Server) Stop(ctx context.Context) (err error) {
 	return
 }
 
+func (s *Server) Renderer(renderer echo.Renderer) (server *Server) {
+	s.echo.Renderer = renderer
+	server = s
+
+	return
+}
+
 func (s *Server) Group(prefix string, middles ...echo.MiddlewareFunc) *Group {
-	return NewGroup(s.echo.Group(prefix, middles...), s.validator, s.logger)
+	return NewGroup(s.echo.Group(s.http.Path(prefix), middles...), s.validator, s.logger)
 }
 
 func (s *Server) Addr() string {
@@ -136,4 +158,17 @@ func (s *Server) detectValidator(gv get.Validator) {
 	} else {
 		s.validator = detected
 	}
+}
+
+func (s *Server) responseLog(_ echo.Context, values middleware.RequestLoggerValues) (err error) {
+	s.logger.Debug(
+		"响应请求",
+		field.New("method", values.Method),
+		field.New("uri", values.URI),
+		field.New("status", values.Status),
+		field.New("size.request", values.ContentLength),
+		field.New("size.response", values.ResponseSize),
+	)
+
+	return
 }
