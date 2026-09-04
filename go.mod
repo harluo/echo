@@ -1,9 +1,9 @@
 module github.com/harluo/echo
 
-go 1.25.0
+go 1.27
 
 require (
-	github.com/goexl/gox v1.9.2
+	github.com/goexl/gox v1.9.3
 	github.com/goexl/log v0.1.0
 	github.com/goexl/mengpo v0.3.2
 	github.com/goexl/validate v0.0.2
