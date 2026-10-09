@@ -68,8 +68,8 @@ func (s *Server) Start(_ context.Context, router Router, routers ...Router) erro
 			binder.bind()
 		}
 	}
-	for _,handle:=range s.http.Handles(){
-		handler:=echo.WrapHandler(handle.Handler)
+	for _, handle := range s.http.Handles() {
+		handler := echo.WrapHandler(handle.Handler)
 		s.echo.Add(handle.Method, handle.Path, handler)
 	}
 
